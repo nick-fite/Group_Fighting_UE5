@@ -34,6 +34,7 @@ private:
 	UFUNCTION() void Move(const FInputActionValue& InputValue);
 	UFUNCTION() void Look(const FInputActionValue& InputValue);
 	UFUNCTION() void PlayerJump();
+	UFUNCTION() void PlayerPunch();
 	UFUNCTION() FVector GetMoveForwardDir() const;
 	UFUNCTION() FVector GetMoveRightDir() const;
 
@@ -46,9 +47,11 @@ private:
 	UPROPERTY(EditAnywhere, category="Input") UInputAction* MoveAction;
 	UPROPERTY(EditAnywhere, category="Input") UInputAction* JumpAction;
 	UPROPERTY(EditAnywhere, category="Input") UInputAction* LookAction;
+	UPROPERTY(EditAnywhere, category="Input") UInputAction* PunchAction;
 	UPROPERTY(EditAnywhere, Category = "Input") float LookSensitivity {0.5f};
 
 	UPROPERTY(EditAnywhere, Category = "Action AnimMontages") UAnimMontage* JumpMontage;
+	UPROPERTY(EditAnywhere, Category = "Action AnimMontages") UAnimMontage* PunchMontage;
 public:
 
 };

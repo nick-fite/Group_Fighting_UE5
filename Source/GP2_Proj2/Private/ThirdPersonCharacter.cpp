@@ -59,6 +59,8 @@ void AThirdPersonCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 		enhancedInputComp->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Move);
 		enhancedInputComp->BindAction(LookAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::Look);
 		enhancedInputComp->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::PlayerJump);
+		enhancedInputComp->BindAction(PunchAction, ETriggerEvent::Triggered, this, &AThirdPersonCharacter::PlayerPunch);
+
 	}
 }
 
@@ -78,8 +80,51 @@ void AThirdPersonCharacter::Look(const FInputActionValue& InputValue)
 
 void AThirdPersonCharacter::PlayerJump()
 {
-	GetMesh()->GetAnimInstance()->Montage_Play(JumpMontage, .1f);
-	Super::Jump();
+	if(!GetMesh()->GetAnimInstance()->Montage_IsPlaying(nullptr))
+	{
+		GetMesh()->GetAnimInstance()->Montage_Play(JumpMontage,  1.0f);
+	}
+		Super::Jump();
+}
+
+void AThirdPersonCharacter::PlayerPunch()
+{
+	if(!GetMesh()->GetAnimInstance()->Montage_IsPlaying(nullptr))
+	{
+		const int sectionToPlay = FMath::RandRange(0,6);
+		const float playRate = 2.0f;
+
+		UE_LOG(LogTemp, Warning, TEXT("%d"), sectionToPlay);
+		
+		FName sectionName;
+		switch (sectionToPlay)
+		{
+		case 0:
+			sectionName = "punch1";
+			break;
+		case 1:
+			sectionName = "punch2";
+			break;
+		case 2:
+			sectionName = "punch3";
+			break;
+		case 3:
+			sectionName = "punch4";
+			break;
+		case 4:
+			sectionName = "punch5";
+			break;
+		case 5:
+			sectionName = "punch6";
+			break;
+			default:
+				sectionName = "punch1";
+				break;
+		}
+		
+		GetMesh()->GetAnimInstance()->Montage_Play(PunchMontage,  playRate);	
+		GetMesh()->GetAnimInstance()->Montage_JumpToSection(sectionName);
+	}
 }
 
 FVector AThirdPersonCharacter::GetMoveForwardDir() const
