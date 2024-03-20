@@ -23,7 +23,7 @@ AThirdPersonCharacter::AThirdPersonCharacter()
 	CameraBoom->bUsePawnControlRotation = true;
 	CameraBoom->TargetArmLength = 800.f;
 	bUseControllerRotationYaw = false;
-
+	
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(1080.f);
 	GetCharacterMovement()->JumpZVelocity = 400.f;
@@ -41,6 +41,8 @@ void AThirdPersonCharacter::BeginPlay()
 			subSystem->AddMappingContext(MappingContext,0);
 		}
 	}
+
+	AnimInstance = GetMesh()->GetAnimInstance();
 }
 
 // Called every frame
@@ -80,21 +82,19 @@ void AThirdPersonCharacter::Look(const FInputActionValue& InputValue)
 
 void AThirdPersonCharacter::PlayerJump()
 {
-	if(!GetMesh()->GetAnimInstance()->Montage_IsPlaying(nullptr))
+	if(!AnimInstance->Montage_IsPlaying(nullptr))
 	{
-		GetMesh()->GetAnimInstance()->Montage_Play(JumpMontage,  1.0f);
+		AnimInstance->Montage_Play(JumpMontage,  1.0f);
 	}
 		Super::Jump();
 }
 
 void AThirdPersonCharacter::PlayerPunch()
 {
-	if(!GetMesh()->GetAnimInstance()->Montage_IsPlaying(nullptr))
+	if(!AnimInstance->Montage_IsPlaying(nullptr))
 	{
 		const int sectionToPlay = FMath::RandRange(0,6);
 		const float playRate = 2.0f;
-
-		UE_LOG(LogTemp, Warning, TEXT("%d"), sectionToPlay);
 		
 		FName sectionName;
 		switch (sectionToPlay)
@@ -122,8 +122,8 @@ void AThirdPersonCharacter::PlayerPunch()
 				break;
 		}
 		
-		GetMesh()->GetAnimInstance()->Montage_Play(PunchMontage,  playRate);	
-		GetMesh()->GetAnimInstance()->Montage_JumpToSection(sectionName);
+		AnimInstance->Montage_Play(PunchMontage,  playRate);	
+		AnimInstance->Montage_JumpToSection(sectionName);
 	}
 }
 

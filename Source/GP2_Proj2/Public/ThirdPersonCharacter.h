@@ -41,6 +41,7 @@ private:
 	//Camera
 	UPROPERTY(VisibleAnywhere, Category="View") USpringArmComponent* CameraBoom;
 	UPROPERTY(VisibleAnywhere, Category="View") UCameraComponent* ViewCamera;
+	UPROPERTY(VisibleAnywhere, Category="Anim") UAnimInstance* AnimInstance;
 	
 	//Input
 	UPROPERTY(EditAnywhere, Category = "Input") UInputMappingContext* MappingContext;
