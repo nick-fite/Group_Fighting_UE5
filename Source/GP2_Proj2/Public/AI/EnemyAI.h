@@ -3,8 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ThirdPersonCharacter.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 #include "EnemyAI.generated.h"
+
+class AThirdPersonCharacter;
+class UGameplayStatics;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FKMovingEnded);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FKPunchingEnded);
 
 UCLASS()
 class GP2_PROJ2_API AEnemyAI : public ACharacter
@@ -26,9 +33,58 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintCallable)
+	float GetDistanceToPlayer()
+	{
+		return DistanceToPlayer;
+	}
 
+	UFUNCTION(BlueprintCallable)
+	AActor* GetPlayer()
+	{
+		return PlayerActor;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	void SetPlayerActor(AActor* newPlayerActor)
+	{
+		PlayerActor = newPlayerActor;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	void SetDistanceToPlayer(float newDistance)
+	{
+		DistanceToPlayer = newDistance;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	void SetPlayerActorAuto()
+	{
+		TSubclassOf<AThirdPersonCharacter> classToFind;
+		TArray<AActor*> AllActors;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), classToFind, AllActors);
+		PlayerActor = AllActors[0];
+	}
+
+	UFUNCTION(BlueprintCallable)
+	void SetDistanceToPlayerAuto()
+	{
+		DistanceToPlayer = FVector::Dist(this->GetActorLocation(), PlayerActor->GetActorLocation());
+	}
+
+	UFUNCTION(BlueprintCallable) void PunchPlayer();
+	
+	UPROPERTY(BlueprintCallable, BlueprintAssignable) FKMovingEnded OnMovingEnded;
+	UPROPERTY(BlueprintCallable, BlueprintAssignable) FKPunchingEnded OnPunchingEnded;
 private:
 	UFUNCTION(BlueprintCallable) void UpdateWalkSpeed(float newVal);
 
+	
+
 	UPROPERTY(EditAnywhere) float MaxWalkSpeed{500.0f};
+	
+	UPROPERTY(EditAnywhere) AActor* PlayerActor;
+	UPROPERTY(EditAnywhere) float DistanceToPlayer;
+
+	UPROPERTY(EditAnywhere) UAnimMontage* PunchMontage;
 };
