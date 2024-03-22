@@ -124,6 +124,8 @@ void AThirdPersonCharacter::PlayerPunch()
 		
 		AnimInstance->Montage_Play(PunchMontage,  playRate);	
 		AnimInstance->Montage_JumpToSection(sectionName);
+
+		SetActorRotation(GetMoveForwardDir().Rotation());
 	}
 }
 
@@ -131,7 +133,8 @@ FVector AThirdPersonCharacter::GetMoveForwardDir() const
 {
 	FVector cameraForward = ViewCamera->GetForwardVector();
 	cameraForward.Z = 0;
-	return cameraForward.GetSafeNormal();}
+	return cameraForward.GetSafeNormal();
+}
 
 FVector AThirdPersonCharacter::GetMoveRightDir() const
 {
