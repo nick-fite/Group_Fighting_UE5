@@ -8,8 +8,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "EnemyAI.generated.h"
 
+class AEnemyGroup;
 class AThirdPersonCharacter;
 class UGameplayStatics;
+class UDamageSystem;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FKMovingEnded);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FKPunchingEnded);
 
@@ -60,10 +62,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetPlayerActorAuto()
 	{
-		TSubclassOf<AThirdPersonCharacter> classToFind;
-		TArray<AActor*> AllActors;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), classToFind, AllActors);
-		PlayerActor = AllActors[0];
+		PlayerActor = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+
+		UE_LOG(LogTemp, Warning, TEXT("Player: %p was found"), PlayerActor);
 	}
 
 	UFUNCTION(BlueprintCallable)
@@ -74,12 +75,16 @@ public:
 
 	UFUNCTION(BlueprintCallable) void PunchPlayer();
 	
+	UFUNCTION(BlueprintCallable) void AskToAttack();
+	UFUNCTION(BlueprintCallable) void ReturnPlayerToken();
+
+
 	UPROPERTY(BlueprintCallable, BlueprintAssignable) FKMovingEnded OnMovingEnded;
 	UPROPERTY(BlueprintCallable, BlueprintAssignable) FKPunchingEnded OnPunchingEnded;
+
+	UPROPERTY() AEnemyGroup* Group;
 private:
 	UFUNCTION(BlueprintCallable) void UpdateWalkSpeed(float newVal);
-
-	
 
 	UPROPERTY(EditAnywhere) float MaxWalkSpeed{500.0f};
 	
@@ -87,4 +92,7 @@ private:
 	UPROPERTY(EditAnywhere) float DistanceToPlayer;
 
 	UPROPERTY(EditAnywhere) UAnimMontage* PunchMontage;
+
+	UPROPERTY(EditAnywhere) UDamageSystem* DamageSystem;
+	
 };

@@ -19,7 +19,9 @@ void AEnemyGroup::BeginPlay()
 
 	for(int i = 0; i < EnemyCount; i++)
 	{
-		EnemyList.Add(Cast<AEnemyAI>(GetWorld()->SpawnActor(BPEnemyAIRef)));
+		AEnemyAI* AI = Cast<AEnemyAI>(GetWorld()->SpawnActor(BPEnemyAIRef));
+		AI->Group = this;
+		EnemyList.Add(AI);
 	}
 }
 

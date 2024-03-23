@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "ThirdPersonCharacter.generated.h"
 
+class UDamageSystem;
 class UCameraComponent;
 class USpringArmComponent;
 struct FInputActionValue;
@@ -53,6 +54,8 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Action AnimMontages") UAnimMontage* JumpMontage;
 	UPROPERTY(EditAnywhere, Category = "Action AnimMontages") UAnimMontage* PunchMontage;
+
 public:
+	UPROPERTY(VisibleAnywhere, Category = "Damage System") UDamageSystem* DamageSystem;
 
 };

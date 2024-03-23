@@ -3,26 +3,30 @@
 
 #include "AI/EnemyAI.h"
 
+#include "Systems/DamageSystem.h"
+
 // Sets default values
 AEnemyAI::AEnemyAI()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	DamageSystem = CreateDefaultSubobject<UDamageSystem>("Damage System");
 }
 
 // Called when the game starts or when spawned
 void AEnemyAI::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	SetPlayerActorAuto();
 }
 
 // Called every frame
 void AEnemyAI::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 	if(GetDistanceToPlayer() < 100.0f)
 	{
 		OnMovingEnded.Broadcast();
@@ -43,7 +47,10 @@ void AEnemyAI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemyAI::PunchPlayer()
 {
-	if(!GetMesh()->GetAnimInstance()->Montage_IsPlaying(nullptr))
+	AThirdPersonCharacter* tpcPlayer = Cast<AThirdPersonCharacter>(PlayerActor);
+	UE_LOG(LogTemp, Warning, TEXT("tokens available: %d"), tpcPlayer->DamageSystem->GetTokenAmount());
+	if(!GetMesh()->GetAnimInstance()->Montage_IsPlaying(nullptr)
+		&& tpcPlayer->DamageSystem->ReserveAttackToken(1))
 	{
 		const int sectionToPlay = FMath::RandRange(0,6);
 		const float playRate = 1.0f;
@@ -77,6 +84,16 @@ void AEnemyAI::PunchPlayer()
 		GetMesh()->GetAnimInstance()->Montage_Play(PunchMontage,  playRate);	
 		GetMesh()->GetAnimInstance()->Montage_JumpToSection(sectionName);
 	}
+}
+
+void AEnemyAI::AskToAttack()
+{
+}
+
+void AEnemyAI::ReturnPlayerToken()
+{
+	AThirdPersonCharacter* tpcPlayer = Cast<AThirdPersonCharacter>(PlayerActor);
+	tpcPlayer->DamageSystem->ReturnAttackToken(1);
 }
 
 void AEnemyAI::UpdateWalkSpeed(float newVal)

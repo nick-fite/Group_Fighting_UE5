@@ -7,6 +7,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Systems/DamageSystem.h"
 
 // Sets default values
 AThirdPersonCharacter::AThirdPersonCharacter()
@@ -14,6 +15,8 @@ AThirdPersonCharacter::AThirdPersonCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	DamageSystem = CreateDefaultSubobject<UDamageSystem>("Damage System");
+	
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("Camera Boom");
 	ViewCamera = CreateDefaultSubobject<UCameraComponent>("View Camera");
 
