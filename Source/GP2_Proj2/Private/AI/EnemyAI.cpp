@@ -3,6 +3,8 @@
 
 #include "AI/EnemyAI.h"
 
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Systems/DamageSystem.h"
 
@@ -21,6 +23,8 @@ void AEnemyAI::BeginPlay()
 	Super::BeginPlay();
 
 	SetPlayerActorAuto();
+
+	OnAskToAttack.AddDynamic(this, &AEnemyAI::SetAskAttackBlackBoardValue);
 }
 
 // Called every frame
@@ -48,10 +52,7 @@ void AEnemyAI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AEnemyAI::PunchPlayer()
 {
-	AThirdPersonCharacter* tpcPlayer = Cast<AThirdPersonCharacter>(PlayerActor);
-	UE_LOG(LogTemp, Warning, TEXT("tokens available: %d"), tpcPlayer->DamageSystem->GetTokenAmount());
-	if(!GetMesh()->GetAnimInstance()->Montage_IsPlaying(nullptr)
-		&& tpcPlayer->DamageSystem->ReserveAttackToken(1))
+	if(!GetMesh()->GetAnimInstance()->Montage_IsPlaying(nullptr))
 	{
 		const int sectionToPlay = FMath::RandRange(0,6);
 		const float playRate = 1.0f;
@@ -87,8 +88,15 @@ void AEnemyAI::PunchPlayer()
 	}
 }
 
-void AEnemyAI::AskToAttack()
+bool AEnemyAI::AskToAttack()
 {
+	AThirdPersonCharacter* tpcPlayer = Cast<AThirdPersonCharacter>(PlayerActor);
+	UE_LOG(LogTemp, Warning, TEXT("tokens available: %d"), tpcPlayer->DamageSystem->GetTokenAmount());
+	if( tpcPlayer->DamageSystem->ReserveAttackToken(1))
+	{
+		HasToken = true;
+	}
+	return  HasToken;
 }
 
 void AEnemyAI::ReturnPlayerToken()
@@ -107,5 +115,10 @@ void AEnemyAI::LookAtPlayer()
 void AEnemyAI::UpdateWalkSpeed(float newVal)
 {
 	MaxWalkSpeed = newVal;
+}
+
+void AEnemyAI::SetAskAttackBlackBoardValue()
+{
+	UAIBlueprintHelperLibrary::GetBlackboard(this)->SetValueAsBool("HasAttackToken",HasToken);
 }
 

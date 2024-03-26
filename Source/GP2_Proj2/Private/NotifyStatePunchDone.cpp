@@ -11,5 +11,6 @@ void UNotifyStatePunchDone::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimSeq
 	if(AEnemyAI* AI = Cast<AEnemyAI>(other))
 	{
 		AI->ReturnPlayerToken();
+		AI->HasToken = false;
 	}
 }

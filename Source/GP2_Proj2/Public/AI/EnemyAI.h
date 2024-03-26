@@ -14,6 +14,7 @@ class UGameplayStatics;
 class UDamageSystem;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FKMovingEnded);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FKPunchingEnded);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FKAskToAttack);
 
 UCLASS()
 class GP2_PROJ2_API AEnemyAI : public ACharacter
@@ -75,15 +76,18 @@ public:
 
 	UFUNCTION(BlueprintCallable) void PunchPlayer();
 	
-	UFUNCTION(BlueprintCallable) void AskToAttack();
+	UFUNCTION(BlueprintCallable) bool AskToAttack();
 	UFUNCTION(BlueprintCallable) void ReturnPlayerToken();
 
 	UFUNCTION(BlueprintCallable) void LookAtPlayer();
 
 	UPROPERTY(BlueprintCallable, BlueprintAssignable) FKMovingEnded OnMovingEnded;
 	UPROPERTY(BlueprintCallable, BlueprintAssignable) FKPunchingEnded OnPunchingEnded;
+	UPROPERTY(BlueprintCallable, BlueprintAssignable) FKAskToAttack OnAskToAttack;
 
 	UPROPERTY() AEnemyGroup* Group;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool HasToken;
 private:
 	UFUNCTION(BlueprintCallable) void UpdateWalkSpeed(float newVal);
 
@@ -95,5 +99,6 @@ private:
 	UPROPERTY(EditAnywhere) UAnimMontage* PunchMontage;
 
 	UPROPERTY(EditAnywhere) UDamageSystem* DamageSystem;
-	
+
+	UFUNCTION() void SetAskAttackBlackBoardValue();
 };
