@@ -78,6 +78,7 @@ public:
 	UFUNCTION(BlueprintCallable) void AskToAttack();
 	UFUNCTION(BlueprintCallable) void ReturnPlayerToken();
 
+	UFUNCTION(BlueprintCallable) void LookAtPlayer();
 
 	UPROPERTY(BlueprintCallable, BlueprintAssignable) FKMovingEnded OnMovingEnded;
 	UPROPERTY(BlueprintCallable, BlueprintAssignable) FKPunchingEnded OnPunchingEnded;

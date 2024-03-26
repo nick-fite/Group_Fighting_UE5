@@ -3,6 +3,7 @@
 
 #include "AI/EnemyAI.h"
 
+#include "Kismet/KismetMathLibrary.h"
 #include "Systems/DamageSystem.h"
 
 // Sets default values
@@ -94,6 +95,13 @@ void AEnemyAI::ReturnPlayerToken()
 {
 	AThirdPersonCharacter* tpcPlayer = Cast<AThirdPersonCharacter>(PlayerActor);
 	tpcPlayer->DamageSystem->ReturnAttackToken(1);
+}
+
+void AEnemyAI::LookAtPlayer()
+{
+	FRotator newRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerActor->GetActorLocation());
+
+	SetActorRotation(newRot);
 }
 
 void AEnemyAI::UpdateWalkSpeed(float newVal)
