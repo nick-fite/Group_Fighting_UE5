@@ -27,6 +27,7 @@ public:
 private:
 	UPROPERTY(EditAnywhere) int AttackTokens{1};
 	UPROPERTY(EditAnywhere) UAnimMontage* HitReaction;
+	UPROPERTY(EditAnywhere) UAnimMontage* DeathAnim;
 public:
 	UFUNCTION(BlueprintCallable)
 	bool ReserveAttackToken(int amount);
@@ -40,5 +41,6 @@ public:
 	
 	UPROPERTY() USkeletalMeshComponent* ParentMesh;
 
-	
+	UPROPERTY(EditAnywhere) int Health{5};
+	UPROPERTY(EditAnywhere) bool HitStunning;
 };

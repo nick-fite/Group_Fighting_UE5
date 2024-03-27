@@ -26,6 +26,7 @@ void AEnemyAI::BeginPlay()
 	SetPlayerActorAuto();
 
 	OnAskToAttack.AddDynamic(this, &AEnemyAI::SetAskAttackBlackBoardValue);
+	OnSetLocationVal.AddDynamic(this, &AEnemyAI::SetPointOfInterestBlackboardValue);
 }
 
 // Called every frame
@@ -111,7 +112,8 @@ void AEnemyAI::ReturnPlayerToken()
 
 void AEnemyAI::LookAtPlayer()
 {
-	FRotator newRot = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerActor->GetActorLocation());
+	FRotator newRot =
+		UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), PlayerActor->GetActorLocation());
 
 	SetActorRotation(newRot);
 }
@@ -124,5 +126,11 @@ void AEnemyAI::UpdateWalkSpeed(float newVal)
 void AEnemyAI::SetAskAttackBlackBoardValue()
 {
 	UAIBlueprintHelperLibrary::GetBlackboard(this)->SetValueAsBool("HasAttackToken",HasToken);
+}
+
+void AEnemyAI::SetPointOfInterestBlackboardValue()
+{
+	UAIBlueprintHelperLibrary::GetBlackboard(this)->SetValueAsVector("PointOfInterest", PointOfInterest);
+	UE_LOG(LogTemp, Warning, TEXT("%s"), *PointOfInterest.ToString());
 }
 

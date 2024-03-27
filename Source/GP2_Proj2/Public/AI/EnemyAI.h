@@ -15,6 +15,7 @@ class UDamageSystem;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FKMovingEnded);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FKPunchingEnded);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FKAskToAttack);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FKSetLocationVal);
 
 UCLASS()
 class GP2_PROJ2_API AEnemyAI : public ACharacter
@@ -81,13 +82,26 @@ public:
 
 	UFUNCTION(BlueprintCallable) void LookAtPlayer();
 
+	UFUNCTION(BlueprintCallable)
+	AEnemyGroup* GetEnemyGroup()
+	{
+		return Group;
+	}
+
 	UPROPERTY(BlueprintCallable, BlueprintAssignable) FKMovingEnded OnMovingEnded;
 	UPROPERTY(BlueprintCallable, BlueprintAssignable) FKPunchingEnded OnPunchingEnded;
 	UPROPERTY(BlueprintCallable, BlueprintAssignable) FKAskToAttack OnAskToAttack;
-
+	UPROPERTY(BlueprintCallable, BlueprintAssignable) FKSetLocationVal OnSetLocationVal;
+	
 	UPROPERTY() AEnemyGroup* Group;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool HasToken;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) FVector PointOfInterest;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) bool isStunned;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite) UPhysicsAsset* PhysicsAsset;
 private:
 	UFUNCTION(BlueprintCallable) void UpdateWalkSpeed(float newVal);
 
@@ -101,4 +115,6 @@ private:
 	UPROPERTY(EditAnywhere) UDamageSystem* DamageSystem;
 
 	UFUNCTION() void SetAskAttackBlackBoardValue();
+
+	UFUNCTION() void SetPointOfInterestBlackboardValue();
 };

@@ -5,6 +5,8 @@
 
 #include "ThirdPersonCharacter.h"
 #include "AI/EnemyAI.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values for this component's properties
@@ -58,15 +60,31 @@ int UDamageSystem::GetTokenAmount()
 
 void UDamageSystem::Hit()
 {
-	FVector endTrace = (GetOwner()->GetActorForwardVector() * 20.0) + GetOwner()->GetActorLocation();
+	FVector endTrace = (GetOwner()->GetActorForwardVector() * 50.0) + GetOwner()->GetActorLocation();
 	FHitResult hitResult;
 	TArray<AActor*> actorsToIgnore;
 	actorsToIgnore.Add(GetOwner());
-	bool hit = UKismetSystemLibrary::SphereTraceSingle(GetWorld(), GetOwner()->GetActorLocation(), endTrace, 30, UEngineTypes::ConvertToTraceType(ECC_Camera), false, actorsToIgnore, EDrawDebugTrace::ForDuration, hitResult, true, FLinearColor::Red, FLinearColor::Blue, 60.0f);
+
+	bool hit = UKismetSystemLibrary::SphereTraceSingle(
+	GetWorld(),
+	GetOwner()->GetActorLocation(), 
+	endTrace,
+	30,
+	UEngineTypes::ConvertToTraceType(ECC_Camera),
+	false,
+	actorsToIgnore,
+	EDrawDebugTrace::ForDuration,
+	hitResult,
+	true,
+	FLinearColor::Red,
+	FLinearColor::Blue,
+	60.0f);
 
 	if(hit)
 	{
-		UDamageSystem* opponentDamageSystem =  hitResult.GetActor()->FindComponentByClass<UDamageSystem>();
+		UDamageSystem* opponentDamageSystem =
+			hitResult.GetActor()->FindComponentByClass<UDamageSystem>();
+
 		if(IsValid(opponentDamageSystem))
 		{
 			opponentDamageSystem->GetHit();
@@ -87,5 +105,31 @@ void UDamageSystem::GetHit()
 	}
 	UE_LOG(LogTemp, Warning, TEXT("%p"), GetOwner());
 
-	ParentMesh->GetAnimInstance()->Montage_Play(HitReaction);
+	Health--;
+	if(Health > 0)
+	{
+		ParentMesh->GetAnimInstance()->Montage_Play(HitReaction);
+	}
+	else
+	{
+		if(GetOwner()->IsA(AEnemyAI::StaticClass()))
+		{
+			if(!Cast<AEnemyAI>(GetOwner())->isStunned)
+			{
+				Cast<AEnemyAI>(GetOwner())->isStunned = true;
+				UAIBlueprintHelperLibrary::
+				GetBlackboard(GetOwner())->SetValueAsBool("IsStunned", true);
+			}
+			else
+			{
+				ParentMesh->GetAnimInstance()->Montage_Play(DeathAnim);	
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("player death"));
+			ParentMesh->GetAnimInstance()->Montage_Play(DeathAnim);
+		}
+	}
+	
 }

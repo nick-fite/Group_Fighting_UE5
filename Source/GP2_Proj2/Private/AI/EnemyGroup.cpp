@@ -2,8 +2,9 @@
 
 
 #include "AI/EnemyGroup.h"
-
 #include "AI/EnemyAI.h"
+#include "Kismet/KismetArrayLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 AEnemyGroup::AEnemyGroup()
@@ -23,6 +24,17 @@ void AEnemyGroup::BeginPlay()
 		AI->Group = this;
 		EnemyList.Add(AI);
 	}
+
+	for(int i = 0; i < EnemyCount; i++)
+	{
+		for(int j = 0; j < EnemyCount; j++)
+		{
+			if(i != j)
+			{
+				EnemyList[i]->MoveIgnoreActorAdd(EnemyList[j]);	
+			}
+		}
+	}
 }
 
 // Called every frame
@@ -32,3 +44,21 @@ void AEnemyGroup::Tick(float DeltaTime)
  
 }
 
+bool AEnemyGroup::GetEnemyLocation(FVector pointToAdd)
+{
+	if(EnemyLocationList.Contains(pointToAdd))
+	{
+		return false;
+	}
+
+	EnemyLocationList.Add(pointToAdd);
+	return true;
+}
+
+FVector AEnemyGroup::GetRandomPatrolLoc()
+{
+	FVector newVal =
+		UKismetMathLibrary::RandomPointInBoundingBox(GetActorLocation(), FVector(500,500,0));
+	SetActorLocation(newVal);
+	return  newVal;
+}

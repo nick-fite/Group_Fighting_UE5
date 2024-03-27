@@ -26,7 +26,18 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite) TSubclassOf<AEnemyAI> BPEnemyAIRef;
+
+	UFUNCTION(BlueprintCallable) bool GetEnemyLocation(FVector pointToAdd);
+	UFUNCTION(BlueprintCallable)
+	void ClearEnemyLocations()
+	{
+		EnemyLocationList.Empty();
+	}
+
+	UFUNCTION(BlueprintCallable) FVector GetRandomPatrolLoc();
 private:
-	UPROPERTY(EditAnywhere) int EnemyCount{5};
+	UPROPERTY(EditAnywhere) int EnemyCount{4};
 	UPROPERTY(EditAnywhere) TArray<AEnemyAI*> EnemyList;
+
+	UPROPERTY(EditAnywhere) TArray<FVector> EnemyLocationList;
 };
