@@ -16,7 +16,6 @@ AThirdPersonCharacter::AThirdPersonCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	DamageSystem = CreateDefaultSubobject<UDamageSystem>("Damage System");
-	
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>("Camera Boom");
 	ViewCamera = CreateDefaultSubobject<UCameraComponent>("View Camera");
 
@@ -46,6 +45,8 @@ void AThirdPersonCharacter::BeginPlay()
 	}
 
 	AnimInstance = GetMesh()->GetAnimInstance();
+	DamageSystem->ParentMesh = GetMesh();
+
 }
 
 // Called every frame
@@ -129,6 +130,7 @@ void AThirdPersonCharacter::PlayerPunch()
 		AnimInstance->Montage_JumpToSection(sectionName);
 
 		SetActorRotation(GetMoveForwardDir().Rotation());
+		DamageSystem->Hit();
 	}
 }
 

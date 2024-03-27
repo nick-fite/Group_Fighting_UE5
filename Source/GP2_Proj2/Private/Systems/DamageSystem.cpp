@@ -3,6 +3,10 @@
 
 #include "Systems/DamageSystem.h"
 
+#include "ThirdPersonCharacter.h"
+#include "AI/EnemyAI.h"
+#include "Kismet/KismetSystemLibrary.h"
+
 // Sets default values for this component's properties
 UDamageSystem::UDamageSystem()
 {
@@ -50,4 +54,38 @@ void UDamageSystem::ReturnAttackToken(int amount)
 int UDamageSystem::GetTokenAmount()
 {
 	return AttackTokens;
+}
+
+void UDamageSystem::Hit()
+{
+	FVector endTrace = (GetOwner()->GetActorForwardVector() * 20.0) + GetOwner()->GetActorLocation();
+	FHitResult hitResult;
+	TArray<AActor*> actorsToIgnore;
+	actorsToIgnore.Add(GetOwner());
+	bool hit = UKismetSystemLibrary::SphereTraceSingle(GetWorld(), GetOwner()->GetActorLocation(), endTrace, 30, UEngineTypes::ConvertToTraceType(ECC_Camera), false, actorsToIgnore, EDrawDebugTrace::ForDuration, hitResult, true, FLinearColor::Red, FLinearColor::Blue, 60.0f);
+
+	if(hit)
+	{
+		UDamageSystem* opponentDamageSystem =  hitResult.GetActor()->FindComponentByClass<UDamageSystem>();
+		if(IsValid(opponentDamageSystem))
+		{
+			opponentDamageSystem->GetHit();
+		}
+	}
+	
+	
+}
+
+void UDamageSystem::GetHit()
+{
+	if(GetOwner()->IsA(AEnemyAI::StaticClass()))
+	{
+		if(Cast<AEnemyAI>(GetOwner())->HasToken)
+		{
+			Cast<AEnemyAI>(GetOwner())->ReturnPlayerToken();
+		}
+	}
+	UE_LOG(LogTemp, Warning, TEXT("%p"), GetOwner());
+
+	ParentMesh->GetAnimInstance()->Montage_Play(HitReaction);
 }

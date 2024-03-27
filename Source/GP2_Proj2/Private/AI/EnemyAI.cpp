@@ -15,6 +15,7 @@ AEnemyAI::AEnemyAI()
 	PrimaryActorTick.bCanEverTick = true;
 
 	DamageSystem = CreateDefaultSubobject<UDamageSystem>("Damage System");
+	DamageSystem->ParentMesh = GetMesh();
 }
 
 // Called when the game starts or when spawned
@@ -85,6 +86,8 @@ void AEnemyAI::PunchPlayer()
 		
 		GetMesh()->GetAnimInstance()->Montage_Play(PunchMontage,  playRate);	
 		GetMesh()->GetAnimInstance()->Montage_JumpToSection(sectionName);
+
+		DamageSystem->Hit();
 	}
 }
 
@@ -103,6 +106,7 @@ void AEnemyAI::ReturnPlayerToken()
 {
 	AThirdPersonCharacter* tpcPlayer = Cast<AThirdPersonCharacter>(PlayerActor);
 	tpcPlayer->DamageSystem->ReturnAttackToken(1);
+	HasToken = false;
 }
 
 void AEnemyAI::LookAtPlayer()
